@@ -14,6 +14,7 @@
           style="width: auto; margin: 0 0 10px 0"
         />
         <Input
+          type="password"
           v-model="form.passowrd"
           prefix="ios-lock-outline"
           placeholder="Enter password"
@@ -34,9 +35,6 @@ import { SIGN_STATE, ROLE } from '@/store/const'
 
 export default {
   name: 'Home',
-  props: {
-    msg: String
-  },
   data() {
     return {
       SIGN_STATE: SIGN_STATE,

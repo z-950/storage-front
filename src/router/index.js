@@ -4,6 +4,7 @@ import Home from '@/views/Home'
 import About from '@/views/About.vue'
 import NotFound from '@/views/NotFound'
 import Query from '@/views/Query'
+import MakeOrder from '@/views/MakeOrder'
 
 Vue.use(VueRouter)
 
@@ -20,6 +21,10 @@ const routes = [
   {
     path: '/query',
     component: Query
+  },
+  {
+    path: '/make-order',
+    component: MakeOrder
   },
 ]
 
