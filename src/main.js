@@ -1,7 +1,11 @@
 import Vue from 'vue'
 import App from './App.vue'
+import ViewUI from 'view-design'
 import router from './router'
 import store from './store'
+import 'view-design/dist/styles/iview.css'
+
+Vue.use(ViewUI)
 
 Vue.config.productionTip = false
 
