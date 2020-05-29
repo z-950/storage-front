@@ -6,6 +6,7 @@ import NotFound from '@/views/NotFound'
 import Query from '@/views/Query'
 import MakeOrder from '@/views/MakeOrder'
 import PickOrder from '@/views/PickOrder'
+import Count from '@/views/Count'
 
 Vue.use(VueRouter)
 
@@ -30,6 +31,10 @@ const routes = [
   {
     path: '/pick-order',
     component: PickOrder
+  },
+  {
+    path: '/count',
+    component: Count
   },
 ]
 

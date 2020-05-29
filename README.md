@@ -1,4 +1,4 @@
-# shop
+# storage
 
 ## Project setup
 ```

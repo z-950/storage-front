@@ -1,6 +1,6 @@
 <template>
   <div class="home-root">
-    <div style="font-size: 24px">welcome shop</div>
+    <div style="font-size: 24px">welcome storage</div>
     <div>state: {{signState}}</div>
     <div
       v-if="role == ROLE.DEFAULT"
