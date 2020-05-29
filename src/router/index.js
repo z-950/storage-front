@@ -5,6 +5,7 @@ import About from '@/views/About.vue'
 import NotFound from '@/views/NotFound'
 import Query from '@/views/Query'
 import MakeOrder from '@/views/MakeOrder'
+import PickOrder from '@/views/PickOrder'
 
 Vue.use(VueRouter)
 
@@ -25,6 +26,10 @@ const routes = [
   {
     path: '/make-order',
     component: MakeOrder
+  },
+  {
+    path: '/pick-order',
+    component: PickOrder
   },
 ]
 

@@ -1,6 +1,6 @@
 <template>
   <div class="make-order-root">
-    <h3 style="text-align: center">order list</h3>
+    <h3 style="text-align: center">new order</h3>
     <Table
       :columns="columns"
       :data="list"
