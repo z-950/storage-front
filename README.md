@@ -1,5 +1,8 @@
 # storage
 
+## notice
+no network user auth. use `customer` or `worker` to login (no password)
+
 ## Project setup
 ```
 yarn install

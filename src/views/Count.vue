@@ -28,7 +28,11 @@
         <Col span="6">
           <List header="product id">
             <ListItem>
-              <Input v-model="form.productId" placeholder="Enter product id..." @on-blur="getOldInfo" />
+              <Input
+                v-model="form.productId"
+                placeholder="Enter product id..."
+                @on-blur="getOldInfo"
+              />
             </ListItem>
           </List>
         </Col>
@@ -60,7 +64,7 @@
           <Button long @click="back">back to start</Button>
         </Col>
         <Col span="6">
-          <Button type="primary" long @click="finish">finish</Button>
+          <Button type="primary" long :loading="finishLoading" @click="finish">finish</Button>
         </Col>
       </Row>
     </div>
@@ -73,6 +77,8 @@
 </template>
 
 <script>
+import { superGet, superPatch } from '@/tool/net'
+
 export default {
   name: 'Count',
   data() {
@@ -90,7 +96,7 @@ export default {
       newColumns: [
         {
           title: 'ProductId',
-          key: 'productId'
+          key: 'id'
         },
         {
           title: 'RegionId',
@@ -111,7 +117,7 @@ export default {
       resColumns: [
         {
           title: 'ProductId',
-          key: 'productId'
+          key: 'id'
         },
         {
           title: 'Old Number',
@@ -139,6 +145,7 @@ export default {
         },
       ],
       result: [],
+      finishLoading: false,
     }
   },
   created() {
@@ -146,43 +153,44 @@ export default {
   },
   methods: {
     prepareShelf() {
-      this.shelfLoading = true
-      // todo: net load shelfList
-      const list = ["A", "B", "C"]
-      this.shelfIdList = list
-      this.shelfLoading = false
       this.shelfId = ''
+      this.shelfLoading = true
+      superGet.bind(this)('shelf-list')
+        .then(res => {
+          if (res !== undefined) {
+            this.shelfIdList = res
+            this.shelfLoading = false
+          }
+        })
     },
     start() {
       this.state = this.stateMap.doing
     },
     getOldInfo() {
-      // todo: net query info
-      let info = {
-        productId: this.form.productId,
-        shelfId: 'A',
-        regionId: 12,
-        number: 10
-      }
-      this.oldInfoList.push(info)
-      this.form.regionId = info.regionId
-      this.form.number = info.number
+      superGet.bind(this)(`/product/${this.form.productId}`)
+        .then((res) => {
+          if (res !== undefined) {
+            this.oldInfoList.push(res)
+            this.form.regionId = res.regionId
+            this.form.number = res.number
+          }
+        })
     },
     confirm() {
       this.newInfoList.push({
-        productId: this.form.productId,
+        id: this.form.productId,
         regionId: this.form.regionId,
         number: this.form.number
       })
     },
     finish() {
-      this.state = this.stateMap.finished
-      // must no new product
+      this.finishLoading = true
+      // create report, must no new product
       this.oldInfoList.forEach((v) => {
         const newInfo = this.newInfoList.find((vv) => vv.productId === v.productId)
         if (v.shelfId !== this.shelfId || v.regionId !== newInfo.regionId || v.number !== newInfo.number) {
           this.result.push({
-            productId: v.productId,
+            id: v.productId,
             oldNumber: v.number,
             newNumber: newInfo.number,
             oldRegion: v.regionId,
@@ -192,7 +200,14 @@ export default {
           })
         }
       })
-      // todo: net update
+      superPatch.bind(this)(`/shelf/${this.shelfId}`, this.newInfoList)
+        .then(res => {
+          if (res !== undefined) {
+            this.$Message.success("success")
+            this.finishLoading = false
+            this.state = this.stateMap.finished
+          }
+        })
     },
     back() {
       this.state = this.stateMap.beginning

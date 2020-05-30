@@ -1,21 +1,15 @@
 <template>
   <div class="query-root">
     <div class="form">
-      <Input
-        search
-        enter-button="query"
-        placeholder="Enter product id"
-        @on-search="query"
-      />
+      <Input search enter-button="query" placeholder="Enter product id" @on-search="query" />
     </div>
-    <Table
-      :columns="columns"
-      :data="results"
-    ></Table>
+    <Table :columns="columns" :data="result"></Table>
   </div>
 </template>
 
 <script>
+import { superGet } from '@/tool/net'
+
 export default {
   name: 'Query',
   data() {
@@ -23,7 +17,7 @@ export default {
       columns: [
         {
           title: 'ProductId',
-          key: 'productId'
+          key: 'id'
         },
         {
           title: 'ShelfId',
@@ -38,18 +32,17 @@ export default {
           key: 'number'
         },
       ],
-      results: [],
+      result: [],
     }
   },
   methods: {
     query(productId) {
-      // todo: query
-      this.results.push({
-        productId: productId,
-        shelfId: 'A',
-        regionId: 12,
-        number: 10
-      })
+      superGet.bind(this)(`/product/${productId}`)
+        .then((res) => {
+          if (res !== undefined) {
+            this.result.push(res)
+          }
+        })
     }
   }
 }

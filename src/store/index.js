@@ -30,7 +30,7 @@ export default new Vuex.Store({
   actions: {
     // eslint-disable-next-line no-unused-vars
     login({ commit }, username, password) {
-      // todo: net work
+      // todo: net work auth
       if (username.includes("worker")) {
         commit('onlineWorker', username)
       } else if (username.includes("customer")) {

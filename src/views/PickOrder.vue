@@ -1,14 +1,7 @@
 <template>
   <div class="pick-order-root">
-    <Table
-      border
-      :columns="orderColumns"
-      :data="orderList"
-    >
-      <template
-        slot-scope="{ row, index }"
-        slot="action"
-      >
+    <Table border :columns="orderColumns" :data="orderList">
+      <template slot-scope="{ row, index }" slot="action">
         <Button
           type="primary"
           size="small"
@@ -38,6 +31,8 @@
 </template>
 
 <script>
+import { superGet, superPatch } from '@/tool/net'
+
 export default {
   name: 'PickOrder',
   data() {
@@ -58,21 +53,7 @@ export default {
           align: 'center'
         }
       ],
-      // todo: get data
-      orderList: [
-        {
-          id: "1",
-          isChecked: false,
-          list: [
-            { id: "aaaa", number: 2, isChecked: false },
-            { id: "baaa", number: 2, isChecked: false },
-            { id: "caaa", number: 2, isChecked: false },
-            { id: "daaa", number: 2, isChecked: false },
-            { id: "eaaa", number: 2, isChecked: false },
-            { id: "faaa", number: 2, isChecked: false },
-          ]
-        },
-      ],
+      orderList: [],
       show: false,
       current: -1,
       productColumns: [
@@ -102,11 +83,27 @@ export default {
       }
     }
   },
+  created() {
+    this.prepareOrder()
+  },
   methods: {
+    prepareOrder() {
+      superGet.bind(this)('/order-list')
+        .then(res => {
+          if (res !== undefined) {
+            this.$Message.success("success")
+            this.orderList = res
+          }
+        })
+    },
     ok() {
       if (this.enableSubmit) {
-        // todo: post
-        this.$Message.info({ content: 'checked ok', duration: 3 })
+        superPatch.bind(this)(`/order/${this.orderList[this.current].id}`)
+          .then(res => {
+            if (res !== undefined) {
+              this.$Message.info({ content: 'order checked', duration: 3 })
+            }
+          })
       } else {
         this.$Message.warning({ content: 'not finish, checked products are save locally', duration: 3 })
       }

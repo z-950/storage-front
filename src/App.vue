@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="app"
-    class="layout"
-  >
+  <div id="app" class="layout">
     <Layout>
       <Header>
         <nav-bar />
@@ -23,6 +20,12 @@ export default {
   name: "App",
   components: {
     NavBar
+  },
+  mounted() {
+    this.$Message.config({
+      top: 120,
+      duration: 3
+    })
   }
 }
 </script>
