@@ -1,13 +1,8 @@
 const PROXY_PATH = '/b'
-// eslint-disable-next-line
-const baseUrl = `${window.location.protocol}//${window.location.hostname}:${API_PORT}${PROXY_PATH}`
+const baseUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}${PROXY_PATH}`
 
 const DEFAULT_FETCH_OPT = {
-  // eslint-disable-next-line
-  mode: FETCH_MODE,
   redirect: 'follow',
-  // eslint-disable-next-line
-  credentials: FETCH_CREDENTIALS,
 }
 
 /**

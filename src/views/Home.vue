@@ -2,10 +2,7 @@
   <div class="home-root">
     <div style="font-size: 24px">welcome storage</div>
     <div>state: {{signState}}</div>
-    <div
-      v-if="role == ROLE.DEFAULT"
-      class="form"
-    >
+    <div v-if="role == ROLE.DEFAULT" class="form">
       <div class="input">
         <Input
           v-model="form.username"
@@ -15,16 +12,13 @@
         />
         <Input
           type="password"
-          v-model="form.passowrd"
+          v-model="form.password"
           prefix="ios-lock-outline"
           placeholder="Enter password"
           style="width: auto; margin: 0 0 10px 0"
         />
       </div>
-      <Button
-        type="primary"
-        @click="login"
-      >login</Button>
+      <Button type="primary" @click="login">login</Button>
     </div>
     <div v-else>you are [{{username}}]</div>
   </div>
@@ -58,8 +52,10 @@ export default {
   },
   methods: {
     login() {
+      const username = this.form.username
+      const password = this.form.password
       // todo: verify input
-      this.$store.dispatch('login', this.form.username, this.form.password)
+      this.$store.dispatch('login', { vue: this, username, password })
     }
   }
 }

@@ -10,15 +10,6 @@
     </Menu>
 
     <Menu
-      v-if="role == ROLE.CUSTOMER"
-      mode="horizontal"
-      theme="dark"
-    >
-      <MenuItem name="Home" to="/">Home</MenuItem>
-      <MenuItem name="Order" to="/make-order">Order</MenuItem>
-    </Menu>
-
-    <Menu
       v-if="role == ROLE.WORKER"
       mode="horizontal"
       theme="dark"

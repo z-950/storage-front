@@ -1,7 +1,12 @@
 # storage
 
 ## notice
-no network user auth. use `customer` or `worker` to login (no password)
+username:
+- `worker1`
+- `worker2`
+- `worker3`
+- `worker4`
+password: `123456`
 
 ## Project setup
 ```

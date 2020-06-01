@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { ROLE, SIGN_STATE } from '@/store/const'
+import { superPost } from '@/tool/net'
 
 Vue.use(Vuex)
 
@@ -16,11 +17,6 @@ export default new Vuex.Store({
       state.username = username
       state.role = ROLE.WORKER
     },
-    onlineCustomer(state, username) {
-      state.signState = SIGN_STATE.ONLINE
-      state.username = username
-      state.role = ROLE.CUSTOMER
-    },
     offline(state) {
       state.signState = SIGN_STATE.OFFLINE
       state.username = null
@@ -28,14 +24,15 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    // eslint-disable-next-line no-unused-vars
-    login({ commit }, username, password) {
-      // todo: net work auth
-      if (username.includes("worker")) {
-        commit('onlineWorker', username)
-      } else if (username.includes("customer")) {
-        commit('onlineCustomer', username)
-      }
+    login({ commit }, { vue, username, password }) {
+      superPost.bind(vue)("/session", { username, password })
+        .then(res => {
+          if (res.role === "worker") {
+            commit('onlineWorker', username)
+          }
+        }).catch(() => {
+          vue.$Message.error('login failed')
+        })
     }
   },
   modules: {
