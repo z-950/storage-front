@@ -155,7 +155,7 @@ export default {
     prepareShelf() {
       this.shelfId = ''
       this.shelfLoading = true
-      superGet.bind(this)('shelf-list')
+      superGet.bind(this)('/shelf/list')
         .then(res => {
           if (res !== undefined) {
             this.shelfIdList = res
@@ -169,7 +169,9 @@ export default {
     getOldInfo() {
       superGet.bind(this)(`/product/${this.form.productId}`)
         .then((res) => {
-          if (res !== undefined) {
+          if (res === null) {
+            this.$Message.info('not found')
+          } else if (res !== undefined) {
             this.oldInfoList.push(res)
             this.form.regionId = res.regionId
             this.form.number = res.number
@@ -190,7 +192,7 @@ export default {
         const newInfo = this.newInfoList.find((vv) => vv.productId === v.productId)
         if (v.shelfId !== this.shelfId || v.regionId !== newInfo.regionId || v.number !== newInfo.number) {
           this.result.push({
-            id: v.productId,
+            id: v.id,
             oldNumber: v.number,
             newNumber: newInfo.number,
             oldRegion: v.regionId,
@@ -200,14 +202,17 @@ export default {
           })
         }
       })
-      superPatch.bind(this)(`/shelf/${this.shelfId}`, this.newInfoList)
-        .then(res => {
-          if (res !== undefined) {
-            this.$Message.success("success")
-            this.finishLoading = false
-            this.state = this.stateMap.finished
-          }
-        })
+
+      superPatch.bind(this)(`/shelf/${this.shelfId}`, this.newInfoList.map(v => {
+        v.shelfId = this.shelfId
+        return v
+      })).then(res => {
+        if (res !== undefined) {
+          this.$Message.success("success")
+          this.finishLoading = false
+          this.state = this.stateMap.finished
+        }
+      })
     },
     back() {
       this.state = this.stateMap.beginning
