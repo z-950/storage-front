@@ -39,7 +39,9 @@ export default {
     query(productId) {
       superGet.bind(this)(`/product/${productId}`)
         .then((res) => {
-          if (res !== undefined) {
+          if (res === null) {
+            this.$Message.info('not found')
+          } else if (res !== undefined) {
             this.result.push(res)
           }
         })
