@@ -1,5 +1,5 @@
 <template>
-  <div class="pick-order-root">
+  <div class="check-order-root">
     <Table border :columns="orderColumns" :data="orderList">
       <template slot-scope="{ row, index }" slot="action">
         <Button
@@ -14,7 +14,7 @@
     <Modal
       v-if="current!==-1"
       v-model="show"
-      :title="orderList[current].id"
+      :title="orderList[current].id.toString()"
       @on-ok="ok"
       @on-cancel="cancel"
     >
@@ -34,7 +34,7 @@
 import { superGet, superPatch } from '@/tool/net'
 
 export default {
-  name: 'PickOrder',
+  name: 'CheckOrder',
   data() {
     return {
       orderColumns: [
@@ -47,7 +47,6 @@ export default {
           key: 'isChecked'
         },
         {
-          title: 'Action',
           slot: 'action',
           width: 150,
           align: 'center'
@@ -66,7 +65,6 @@ export default {
           key: 'number'
         },
         {
-          title: 'IsChecked',
           type: 'selection',
           width: 60,
           align: 'center'
@@ -88,10 +86,15 @@ export default {
   },
   methods: {
     prepareOrder() {
-      superGet.bind(this)('/order-list')
+      superGet.bind(this)('/order/not-checked')
         .then(res => {
           if (res !== undefined) {
             this.$Message.success("success")
+            res.forEach((v) => {
+              v.list = v.productList.map((pid, i) => {
+                return { id: pid, number: v.numberList[i], isChecked: false }
+              })
+            })
             this.orderList = res
           }
         })
@@ -101,15 +104,18 @@ export default {
         superPatch.bind(this)(`/order/${this.orderList[this.current].id}`)
           .then(res => {
             if (res !== undefined) {
-              this.$Message.info({ content: 'order checked', duration: 3 })
+              this.$Message.success({ content: 'order checked', duration: 3 })
+              this.orderList[this.current].isChecked = true
             }
           })
       } else {
-        this.$Message.warning({ content: 'not finish, checked products are save locally', duration: 3 })
+        this.discheckAllProduct()
+        this.$Message.warning({ content: 'not finish, checked products are not save', duration: 3 })
       }
     },
     cancel() {
-      this.$Message.warning({ content: 'not finish, checked products are save locally', duration: 3 })
+      this.discheckAllProduct()
+      this.$Message.warning({ content: 'not finish, checked products are not save', duration: 3 })
     },
     checkOrder(index) {
       this.show = true
@@ -140,6 +146,13 @@ export default {
         }
       })
     },
+    discheckAllProduct() {
+      this.orderList[this.current].list.forEach((v) => {
+        v.isChecked = false
+        v['_checked'] = false
+        v['_disabled'] = false
+      })
+    }
   },
 }
 </script>

@@ -4,7 +4,7 @@ import Home from '@/views/Home'
 import About from '@/views/About.vue'
 import NotFound from '@/views/NotFound'
 import Query from '@/views/Query'
-import PickOrder from '@/views/PickOrder'
+import CheckOrder from '@/views/CheckOrder'
 import Count from '@/views/Count'
 
 Vue.use(VueRouter)
@@ -24,8 +24,8 @@ const routes = [
     component: Query
   },
   {
-    path: '/pick-order',
-    component: PickOrder
+    path: '/check-order',
+    component: CheckOrder
   },
   {
     path: '/count',
