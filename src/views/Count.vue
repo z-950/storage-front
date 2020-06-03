@@ -189,7 +189,7 @@ export default {
       this.finishLoading = true
       // create report, must no new product
       this.oldInfoList.forEach((v) => {
-        const newInfo = this.newInfoList.find((vv) => vv.productId === v.productId)
+        const newInfo = this.newInfoList.find((it) => it.id === v.id)
         if (v.shelfId !== this.shelfId || v.regionId !== newInfo.regionId || v.number !== newInfo.number) {
           this.result.push({
             id: v.id,
@@ -218,6 +218,7 @@ export default {
       this.state = this.stateMap.beginning
       this.oldInfoList = []
       this.newInfoList = []
+      this.result = []
       this.form.productId = ''
       this.form.regionId = null
       this.form.number = null
