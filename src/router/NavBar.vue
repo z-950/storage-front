@@ -16,6 +16,7 @@
     >
       <MenuItem name="Home" to="/">Home</MenuItem>
       <MenuItem name="Query" to="/query">Query</MenuItem>
+      <MenuItem name="Query" to="/product-put">Put Product</MenuItem>
       <MenuItem name="Order" to="/check-order">Order</MenuItem>
       <MenuItem name="Count" to="/count">Count</MenuItem>
     </Menu>

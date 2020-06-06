@@ -6,6 +6,7 @@ import NotFound from '@/views/NotFound'
 import Query from '@/views/Query'
 import CheckOrder from '@/views/CheckOrder'
 import Count from '@/views/Count'
+import ProductPut from '@/views/ProductPut'
 
 Vue.use(VueRouter)
 
@@ -30,6 +31,10 @@ const routes = [
   {
     path: '/count',
     component: Count
+  },
+  {
+    path: '/product-put',
+    component: ProductPut
   },
 ]
 
