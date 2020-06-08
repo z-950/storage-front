@@ -8,9 +8,10 @@
     <Menu v-else-if="role == ROLE.WORKER" mode="horizontal" theme="dark">
       <MenuItem name="Home" to="/">Home</MenuItem>
       <MenuItem name="Query" to="/query">Query</MenuItem>
-      <MenuItem name="Query" to="/product-put">Put Product</MenuItem>
-      <MenuItem name="Order" to="/check-order">Order</MenuItem>
+      <MenuItem name="put" to="/product-put">Put Product</MenuItem>
+      <MenuItem name="Order" to="/check-order">Check Order</MenuItem>
       <MenuItem name="Count" to="/count">Count</MenuItem>
+      <MenuItem name="check-return" to="/check-return">Check Return</MenuItem>
     </Menu>
 
     <Menu v-else mode="horizontal" theme="dark">

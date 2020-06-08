@@ -80,7 +80,6 @@ export default {
       superGet.bind(this)('/order/not-checked')
         .then(res => {
           if (res !== undefined) {
-            console.log(res)
             this.raw = res
             this.orderList = []
             res.forEach((list) => {
@@ -123,9 +122,15 @@ export default {
       })
     },
     checkAllProduct() {
+      const that = this
+
       function syncCheckOrder(index) {
-        if (this.raw[this.current].length > index) {
-          this.doCheckOrder(this.raw[this.current][index].uid).then(() => {
+        if (that.raw[that.current].length > index) {
+          const v = that.raw[that.current][index]
+          that.doCheckOrder(v.uid).then(() => {
+            v.isChecked = true
+            v['_checked'] = true
+            v['_disabled'] = true
             syncCheckOrder(index + 1)
           })
         }

@@ -10,6 +10,7 @@ import CheckOrder from '@/views/CheckOrder'
 import Count from '@/views/Count'
 import ProductPut from '@/views/ProductPut'
 import OrderCreate from '@/views/OrderCreate'
+import CheckReturn from '@/views/CheckReturn'
 
 Vue.use(VueRouter)
 
@@ -22,6 +23,7 @@ auth[ROLE.WORKER] = [
   '/check-order',
   '/count',
   '/product-put',
+  '/check-return',
 ]
 auth[ROLE.CUSTOMER] = ['/', '/not-found', '/create-order',]
 
@@ -58,6 +60,10 @@ const routes = [
     path: '/create-order',
     component: OrderCreate
   },
+  {
+    path: '/check-return',
+    component: CheckReturn
+  }
 ]
 
 const router = new VueRouter({

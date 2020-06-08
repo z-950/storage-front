@@ -44,7 +44,7 @@ export default {
               if (res === null) {
                 that.$Message.error('not found')
               } else if (res !== undefined) {
-                that.$Message.success(`successm, order id:${res.id}`)
+                that.$Message.success(`successm, order id:${data[index].id}`)
               }
             }).then(() => syncCreate(index + 1))
       }
