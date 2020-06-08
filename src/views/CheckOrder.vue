@@ -1,29 +1,29 @@
 <template>
   <div class="check-order-root">
-    <Table border :columns="orderColumns" :data="orderList">
-      <template slot-scope="{ row, index }" slot="action">
+    <Table border :columns="taskColumns" :data="orderList">
+      <template slot-scope="{ index }" slot="action">
         <Button
           type="primary"
           size="small"
           style="margin-right: 5px"
-          @click="checkOrder(index)"
-          :disabled="row.isChecked"
+          @click="checkTask(index)"
+          :disabled="taskIsChecked(index)"
         >check</Button>
       </template>
     </Table>
     <Modal
       v-if="current!==-1"
       v-model="show"
-      :title="orderList[current].id.toString()"
+      :title="orderList[current].id"
       @on-ok="ok"
       @on-cancel="cancel"
     >
       <Table
         border
         ref="selection"
-        :columns="productColumns"
-        :data="orderList[current].list"
-        @on-select="checkProduct"
+        :columns="orderColumns"
+        :data="raw[current]"
+        @on-select="checkOrder"
         @on-select-all="checkAllProduct"
       ></Table>
     </Modal>
@@ -37,14 +37,10 @@ export default {
   name: 'CheckOrder',
   data() {
     return {
-      orderColumns: [
+      taskColumns: [
         {
           title: 'OrderId',
           key: 'id'
-        },
-        {
-          title: 'IsChecked',
-          key: 'isChecked'
         },
         {
           slot: 'action',
@@ -55,10 +51,11 @@ export default {
       orderList: [],
       show: false,
       current: -1,
-      productColumns: [
+      raw: [],
+      orderColumns: [
         {
           title: 'ProductId',
-          key: 'id'
+          key: 'product'
         },
         {
           title: 'Number',
@@ -72,55 +69,41 @@ export default {
       ],
     }
   },
-  computed: {
-    enableSubmit() {
-      if (this.current === -1) {
-        return false
-      } else {
-        return this.orderList[this.current].list.every((v) => v.isChecked)
-      }
-    }
-  },
   created() {
     this.prepareOrder()
   },
   methods: {
+    taskIsChecked(index) {
+      return this.raw[index].every((it) => it.isChecked)
+    },
     prepareOrder() {
       superGet.bind(this)('/order/not-checked')
         .then(res => {
           if (res !== undefined) {
-            this.$Message.success("success")
-            res.forEach((v) => {
-              v.list = v.productList.map((pid, i) => {
-                return { id: pid, number: v.numberList[i], isChecked: false }
+            console.log(res)
+            this.raw = res
+            this.orderList = []
+            res.forEach((list) => {
+              this.orderList.push({
+                id: list[0].id,
+                isChecked: list.every((it) => it.isChecked)
               })
             })
-            this.orderList = res
           }
         })
     },
     ok() {
-      if (this.enableSubmit) {
-        superPatch.bind(this)(`/order/${this.orderList[this.current].id}`)
-          .then(res => {
-            if (res !== undefined) {
-              this.$Message.success({ content: 'order checked', duration: 3 })
-              this.orderList[this.current].isChecked = true
-            }
-          })
-      } else {
-        this.discheckAllProduct()
-        this.$Message.warning({ content: 'not finish, checked products are not save', duration: 3 })
+      if (!this.taskIsChecked(this.current)) {
+        this.$Message.warning({ content: 'not finish, checked products are saved', duration: 3 })
       }
     },
     cancel() {
-      this.discheckAllProduct()
-      this.$Message.warning({ content: 'not finish, checked products are not save', duration: 3 })
+      this.$Message.warning({ content: 'not finish, checked products are saved', duration: 3 })
     },
-    checkOrder(index) {
+    checkTask(index) {
       this.show = true
       this.current = index
-      this.orderList[this.current].list.forEach((v) => {
+      this.raw[this.current].forEach((v) => {
         if (v.isChecked) {
           v['_checked'] = true
           v['_disabled'] = true
@@ -128,30 +111,35 @@ export default {
       })
     },
     // eslint-disable-next-line no-unused-vars
-    checkProduct(selection, row) {
-      this.orderList[this.current].list.forEach((v) => {
-        if (!v.isChecked && v.id === row.id) {
-          v.isChecked = true
-          v['_checked'] = true
-          v['_disabled'] = true
+    checkOrder(selection, row) {
+      this.raw[this.current].forEach((v) => {
+        if (!v.isChecked && v.uid === row.uid) {
+          this.doCheckOrder(v.uid).then(() => {
+            v.isChecked = true
+            v['_checked'] = true
+            v['_disabled'] = true
+          })
         }
       })
     },
     checkAllProduct() {
-      this.orderList[this.current].list.forEach((v) => {
-        if (!v.isChecked) {
-          v.isChecked = true
-          v['_checked'] = true
-          v['_disabled'] = true
+      function syncCheckOrder(index) {
+        if (this.raw[this.current].length > index) {
+          this.doCheckOrder(this.raw[this.current][index].uid).then(() => {
+            syncCheckOrder(index + 1)
+          })
         }
-      })
+      }
+
+      syncCheckOrder(0)
     },
-    discheckAllProduct() {
-      this.orderList[this.current].list.forEach((v) => {
-        v.isChecked = false
-        v['_checked'] = false
-        v['_disabled'] = false
-      })
+    doCheckOrder(uid) {
+      return superPatch.bind(this)(`/order/${uid}`)
+        .then(res => {
+          if (res !== undefined) {
+            this.$Message.success({ content: 'order checked', duration: 3 })
+          }
+        })
     }
   },
 }

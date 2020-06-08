@@ -6,4 +6,5 @@ export const SIGN_STATE = {
 export const ROLE = {
     DEFAULT: 'default',
     WORKER: 'worker',
+    CUSTOMER: 'customer',
 }
