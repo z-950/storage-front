@@ -82,7 +82,7 @@ export default {
       syncCheckOrder(0)
     },
     doCheckOrder(uid) {
-      return superPatch.bind(this)(`/order/${uid}`)
+      return superPatch.bind(this)(`/return/${uid}`)
         .then(res => {
           if (res !== undefined) {
             this.$Message.success({ content: 'order checked', duration: 3 })
