@@ -223,13 +223,16 @@ export default {
         return v
       })).then(res => {
         if (res !== undefined) {
-          superPatch.bind(that)(`/count/${that.countList[that.currentIndex].id}`).ther(res => {
-            if (res !== undefined) {
-              that.$Message.success("success")
-              that.finishLoading = false
-              that.state = that.stateMap.finished
-            }
-          })
+          that.doFinishCount(that.countList[that.currentIndex].id)
+        }
+      })
+    },
+    doFinishCount(id) {
+      superPatch.bind(this)(`/count/${id}`, null).then(res => {
+        if (res !== undefined) {
+          this.$Message.success("success")
+          this.finishLoading = false
+          this.state = this.stateMap.finished
         }
       })
     },
