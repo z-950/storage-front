@@ -39,7 +39,7 @@ export default {
       // 并发控制
       function syncCreate(index) {
         if (data.length > index)
-          return superPost('/order/create', data[index])
+          return superPost.bind(that)('/order/create', data[index])
             .then(res => {
               if (res === null) {
                 that.$Message.error('not found')

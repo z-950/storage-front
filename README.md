@@ -7,6 +7,7 @@ username:
 - `worker2`
 - `worker3`
 - `worker4`
+- `manager`
 password: `123456`
 
 ## Project setup

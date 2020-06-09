@@ -7,4 +7,5 @@ export const ROLE = {
     DEFAULT: 'default',
     WORKER: 'worker',
     CUSTOMER: 'customer',
+    MANAGER: 'manager'
 }

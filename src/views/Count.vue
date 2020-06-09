@@ -1,27 +1,23 @@
 <template>
   <div class="query-root">
     <div v-if="state === stateMap.beginning">
-      <Row :gutter="16" type="flex" justify="center" align="middle">
-        <Col span="6">
-          <Select
-            v-model="shelfId"
-            style="width:200px"
-            placeholder="select shelf"
-            :loading="shelfLoading"
-          >
-            <Option v-for="id in shelfIdList" :value="id" :key="id">{{ id }}</Option>
-          </Select>
-        </Col>
-        <Col span="6">
-          <Button type="primary" long @click="start">start</Button>
-        </Col>
-      </Row>
+      <Table border :columns="countColumns" :data="countList">
+        <template slot-scope="{ index }" slot="action">
+          <Button
+            type="primary"
+            size="small"
+            style="margin-right: 5px"
+            @click="start(index)"
+            :disabled="countList[index].finished"
+          >start</Button>
+        </template>
+      </Table>
     </div>
     <div v-else-if="state === stateMap.doing">
       <Row :gutter="16" type="flex" justify="center" align="bottom">
         <Col span="4">
           <span style="font-size: 24px;color: #515a6e;">in shelf:&nbsp;</span>
-          <span style="font-size: 24px;color: #2d8cf0;">{{shelfId}}</span>
+          <span style="font-size: 24px;color: #2d8cf0;">{{countList[currentIndex].shelfId}}</span>
         </Col>
       </Row>
       <Row :gutter="16" type="flex" justify="center" align="bottom">
@@ -90,9 +86,27 @@ export default {
     return {
       stateMap: stateMap,
       state: stateMap.beginning,
-      shelfId: '',
-      shelfIdList: [],
-      shelfLoading: true,
+      countColumns: [
+        {
+          title: 'Id',
+          key: 'id'
+        },
+        {
+          title: 'Shelf Id',
+          key: 'shelfId'
+        },
+        {
+          title: 'Finished',
+          key: 'finished'
+        },
+        {
+          slot: 'action',
+          width: 150,
+          align: 'center'
+        }
+      ],
+      countList: [],
+      currentIndex: -1,
       newColumns: [
         {
           title: 'ProductId',
@@ -149,21 +163,19 @@ export default {
     }
   },
   created() {
-    this.prepareShelf()
+    this.prepareCount()
   },
   methods: {
-    prepareShelf() {
-      this.shelfId = ''
-      this.shelfLoading = true
-      superGet.bind(this)('/shelf/list')
+    prepareCount() {
+      superGet.bind(this)('/count/not-finished')
         .then(res => {
           if (res !== undefined) {
-            this.shelfIdList = res
-            this.shelfLoading = false
+            this.countList = res
           }
         })
     },
-    start() {
+    start(index) {
+      this.currentIndex = index
       this.state = this.stateMap.doing
     },
     getOldInfo() {
@@ -187,10 +199,11 @@ export default {
     },
     finish() {
       this.finishLoading = true
+      const shelfId = this.countList[this.currentIndex].shelfId
       // create report, must no new product
       this.oldInfoList.forEach((v) => {
         const newInfo = this.newInfoList.find((it) => it.id === v.id)
-        if (v.shelfId !== this.shelfId || v.regionId !== newInfo.regionId || v.number !== newInfo.number) {
+        if (v.shelfId !== shelfId || v.regionId !== newInfo.regionId || v.number !== newInfo.number) {
           this.result.push({
             id: v.id,
             oldNumber: v.number,
@@ -198,19 +211,25 @@ export default {
             oldRegion: v.regionId,
             newRegion: newInfo.regionId,
             oldShelf: v.shelfId,
-            newShelf: this.shelfId,
+            newShelf: shelfId,
           })
         }
       })
 
-      superPatch.bind(this)(`/shelf/${this.shelfId}`, this.newInfoList.map(v => {
-        v.shelfId = this.shelfId
+      const that = this
+
+      superPatch.bind(that)(`/product/`, that.newInfoList.map(v => {
+        v.shelfId = shelfId
         return v
       })).then(res => {
         if (res !== undefined) {
-          this.$Message.success("success")
-          this.finishLoading = false
-          this.state = this.stateMap.finished
+          superPatch.bind(that)(`/count/${that.countList[that.currentIndex].id}`).ther(res => {
+            if (res !== undefined) {
+              that.$Message.success("success")
+              that.finishLoading = false
+              that.state = that.stateMap.finished
+            }
+          })
         }
       })
     },
@@ -222,7 +241,7 @@ export default {
       this.form.productId = ''
       this.form.regionId = null
       this.form.number = null
-      this.prepareShelf()
+      this.prepareCount()
     }
   }
 }

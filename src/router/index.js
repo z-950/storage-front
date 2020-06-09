@@ -11,6 +11,8 @@ import Count from '@/views/Count'
 import ProductPut from '@/views/ProductPut'
 import OrderCreate from '@/views/OrderCreate'
 import CheckReturn from '@/views/CheckReturn'
+import CountCreate from '@/views/CountCreate'
+import CountQuery from '@/views/CountQuery'
 
 Vue.use(VueRouter)
 
@@ -26,6 +28,7 @@ auth[ROLE.WORKER] = [
   '/check-return',
 ]
 auth[ROLE.CUSTOMER] = ['/', '/not-found', '/create-order',]
+auth[ROLE.MANAGER] = ['/', '/not-found', '/create-count','/query-count',]
 
 const routes = [
   {
@@ -63,7 +66,15 @@ const routes = [
   {
     path: '/check-return',
     component: CheckReturn
-  }
+  },
+  {
+    path: '/create-count',
+    component: CountCreate
+  },
+  {
+    path: '/query-count',
+    component: CountQuery
+  },
 ]
 
 const router = new VueRouter({

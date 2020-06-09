@@ -14,9 +14,19 @@
       <MenuItem name="check-return" to="/check-return">Check Return</MenuItem>
     </Menu>
 
+    <Menu v-else-if="role == ROLE.MANAGER" mode="horizontal" theme="dark">
+      <MenuItem name="Home" to="/">Home</MenuItem>
+      <MenuItem name="create-count" to="/create-count">Create Order</MenuItem>
+      <MenuItem name="query-count" to="/query-count">Query Order</MenuItem>
+    </Menu>
+
     <Menu v-else mode="horizontal" theme="dark">
       <MenuItem name="Home" to="/">Home</MenuItem>
       <MenuItem name="About" to="/about">About</MenuItem>
+    </Menu>
+
+    <Menu v-if="role != ROLE.DEFAULT" mode="horizontal" theme="dark" @on-select="logout">
+      <MenuItem name="logout">Logout</MenuItem>
     </Menu>
   </div>
 </template>
@@ -36,5 +46,20 @@ export default {
       return this.$store.state.role
     },
   },
+  methods: {
+    logout() {
+      this.$store.dispatch('logout', () => {
+        if (this.$router.currentRoute.path !== '/') {
+          this.$router.push('/')
+        }
+      })
+    }
+  }
 }
 </script>
+
+<style lang="stylus">
+#nav-root
+  display: flex
+  justify-content: space-between
+</style>

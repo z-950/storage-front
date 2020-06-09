@@ -22,6 +22,11 @@ const store = new Vuex.Store({
       state.username = username
       state.role = ROLE.CUSTOMER
     },
+    onlineManager(state, username) {
+      state.signState = SIGN_STATE.ONLINE
+      state.username = username
+      state.role = ROLE.MANAGER
+    },
     offline(state) {
       state.signState = SIGN_STATE.OFFLINE
       state.username = null
@@ -34,12 +39,18 @@ const store = new Vuex.Store({
         .then(res => {
           if (res.role === ROLE.WORKER) {
             commit('onlineWorker', username)
-          }else if(res.role == ROLE.CUSTOMER){
+          } else if (res.role == ROLE.CUSTOMER) {
             commit('onlineCustomer', username)
+          } else if (res.role == ROLE.MANAGER) {
+            commit('onlineManager', username)
           }
         }).catch(() => {
           vue.$Message.error('login failed')
         })
+    },
+    logout({ commit }, cb) {
+      commit('offline')
+      cb()
     }
   },
   modules: {
